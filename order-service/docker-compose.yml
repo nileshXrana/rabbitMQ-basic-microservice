@@ -1,0 +1,26 @@
+services:
+  order-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - .:/app
+      - order_node_modules:/app/node_modules
+
+    env_file:
+      - .env
+
+    networks:
+      - backend
+
+volumes:
+  order_node_modules:
+
+networks:
+  backend:
+    external: true
