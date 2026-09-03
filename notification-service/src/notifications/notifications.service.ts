@@ -8,6 +8,8 @@ export class NotificationsService implements OnModuleInit {
   async onModuleInit() {
     const channel = this.rabbitMQService.getChannel();
 
+    channel.prefetch(1); // Process one message at a time
+
     await channel.consume(
       'notification_queue',
       (message) => {
@@ -15,11 +17,15 @@ export class NotificationsService implements OnModuleInit {
           return;
         }
 
+        const secs = 10;
         const order = JSON.parse(message.content.toString());
 
         console.log('Received order:', order);
 
-        channel.ack(message);
+        setTimeout(function () {
+          console.log(' [x] Done');
+          channel.ack(message);
+        }, secs * 1000);
       },
       {
         noAck: false, // Enable manual acknowledgment

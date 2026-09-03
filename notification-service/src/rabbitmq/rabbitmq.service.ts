@@ -13,6 +13,9 @@ export class RabbitMQService implements OnModuleInit {
 
     await this.channel.assertQueue('notification_queue', {
       durable: true,
+      arguments: {
+        'x-queue-type': 'quorum',
+      },
     });
 
     await this.channel.bindQueue(

@@ -1,22 +1,22 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import amqp, { Channel, ChannelModel } from 'amqplib';
+import amqp, { ConfirmChannel, ChannelModel } from 'amqplib';
 
 @Injectable()
 export class RabbitMQService implements OnModuleInit {
   private connection!: ChannelModel;
-  private channel!: Channel;
+  private channel!: ConfirmChannel;
 
   async onModuleInit() {
     this.connection = await amqp.connect('amqp://rabbitmq:5672');
 
-    this.channel = await this.connection.createChannel();
+    this.channel = await this.connection.createConfirmChannel();
 
     await this.channel.assertExchange('orders', 'direct', {
       durable: true,
     });
   }
 
-  getChannel(): Channel {
+  getChannel(): ConfirmChannel {
     return this.channel;
   }
 }

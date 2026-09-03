@@ -6,7 +6,7 @@ import { OrderDto } from './order.dto';
 export class OrdersService {
   constructor(private readonly rabbitMQService: RabbitMQService) {}
 
-  createOrder(orderDto: OrderDto) {
+  async createOrder(orderDto: OrderDto) {
     // save data to db
     const order = {
       email: orderDto.email,
@@ -25,6 +25,9 @@ export class OrdersService {
         persistent: true,
       },
     );
+
+    await channel.waitForConfirms();
+    console.log('Message confirmed by RabbitMQ');
 
     // return a response
     return {
